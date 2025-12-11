@@ -4,7 +4,7 @@
 
 
 
-**A decentralised Voting platform**
+**A decentralised role based Voting platform**
 
 
 
