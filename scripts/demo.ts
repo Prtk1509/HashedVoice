@@ -1,48 +1,57 @@
 import { ethers } from "hardhat";
 
 async function main() {
-    const CONTRACT_ADDRESS = "0x5fbdb2315678afecb367f032d93f642f64180aa3";
+    const CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
     const contract = await ethers.getContractAt("HashedVoice", CONTRACT_ADDRESS);
 
-    const [admin,voter1]=await ethers.getSigners();
+    const [admin,manager,candidatemgr,voter1]=await ethers.getSigners();
 
     console.log("Admin address:",admin.address);
-    console.log("Voter1 address:",voter1.address);
-
-    console.log("Adding Candidates...");
-    let tx=await contract.connect(admin).addCandidate("Alice");
+    
+    let tx = await contract.connect(admin).grantRole(ethers.id("ELECTION_ADMIN_ROLE"),manager.address);
     await tx.wait();
-    tx=await contract.connect(admin).addCandidate("Bob");
+    console.log(`Granted ELECTION_ADMIN_ROLE to manager: ${manager.address}`);
+
+    tx = await contract.connect(admin).grantRole(ethers.id("CANDIDATE_MANAGER_ROLE"),candidatemgr.address);
+    await tx.wait();
+    console.log(`Granted CANDIDATE_MANAGER_ROLE to candidate manager: ${candidatemgr.address}`);
+
+    tx = await contract.connect(manager).createElection("CR Elections Freshers 2025", "Election for Class Representative of CSE Freshers 2025", "25JE0853", "25JE0992");
+    let receipt = await tx.wait();
+    const electionId =1; //Just to keep demo simple.
+    console.log(`Election created with ID: ${electionId}`);
+
+    //Adding candidates
+    tx = await contract.connect(candidatemgr).addCandidate(electionId, "Prav Prateek");
+    await tx.wait();
+    console.log(`Added candidate Prav Prateek to election ID: ${electionId}`);
+
+    tx = await contract.connect(candidatemgr).addCandidate(electionId, "Anurag Varshney");
+    await tx.wait();
+    console.log(`Added candidate Anurag Varshney to election ID: ${electionId}`);
+
+    //Opening election
+    tx = await contract.connect(manager).openElection(electionId);
+    await tx.wait();
+    console.log(`Election ID: ${electionId} is now OPEN for voting.`);
+
+    //Voting
+    tx = await contract.connect(voter1).vote(electionId, 1,"25JE0901");
     await tx.wait();
     
-    console.log("Authorising voter1...");
-    tx=await contract.connect(admin).authorizeVoter(voter1.address,"25JE0948");
+    //After voting, trying to fetch.
+    const c1 = await contract.connect(voter1).getCandidate(electionId, 1);
+    console.log("Candidate 1 (visible to non-admin during open election):", c1);
+
+    //Closing election
+    tx = await contract.connect(manager).closeElection(electionId);
     await tx.wait();
-
-    console.log("Opening voting...");
-    tx=await contract.connect(admin).openVoting();
-    await tx.wait();
-
-    console.log("Voter1 voting for candidate 1...");
-    tx=await contract.connect(voter1).vote(1);
-    await tx.wait();
-
-    const cand1=await contract.getCandidate(1);
-    const cand2=await contract.getCandidate(2);
-
-    console.log("Candidate 1:", {
-        id:cand1[0].toString(),
-        name:cand1[1],
-        votes:cand1[2].toString()
-    });
-
-    console.log("Candidate 2:", {
-        id:cand2[0].toString(),
-        name:cand2[1],
-        votes:cand2[2].toString()
-    });
     
+    //Now, results will be publicly visible.
+
+    const r1 = await contract.getCandidate(electionId, 1);
+    console.log("Candidate 1 (after election closed):", r1);
 }
 
 main().catch((error) => {
