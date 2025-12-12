@@ -40,9 +40,9 @@ async function main() {
     tx = await contract.connect(voter1).vote(electionId, 1,"25JE0901");
     await tx.wait();
     
-    //After voting, trying to fetch.
+    //After voting, if a voter tries to fetch results.
     const c1 = await contract.connect(voter1).getCandidate(electionId, 1);
-    console.log("Candidate 1 (visible to non-admin during open election):", c1);
+    console.log("Candidate 1 (visible to voter during open election):", c1); //Will not be able to see vote count. Though admin can.
 
     //Closing election
     tx = await contract.connect(manager).closeElection(electionId);
@@ -51,7 +51,7 @@ async function main() {
     //Now, results will be publicly visible.
 
     const r1 = await contract.getCandidate(electionId, 1);
-    console.log("Candidate 1 (after election closed):", r1);
+    console.log("Candidate 1 (after election closed):", r1); //Will be able to see vote count now.
 }
 
 main().catch((error) => {
