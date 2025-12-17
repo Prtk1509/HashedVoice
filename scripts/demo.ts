@@ -23,11 +23,11 @@ async function main() {
     console.log(`Election created with ID: ${electionId}`);
 
     //Adding candidates
-    tx = await contract.connect(candidatemgr).addCandidate(electionId, "Prav Prateek");
+    tx = await contract.connect(candidatemgr).addCandidate(electionId, "Kendrick");
     await tx.wait();
     console.log(`Added candidate Prav Prateek to election ID: ${electionId}`);
 
-    tx = await contract.connect(candidatemgr).addCandidate(electionId, "Anurag Varshney");
+    tx = await contract.connect(candidatemgr).addCandidate(electionId, "Drake");
     await tx.wait();
     console.log(`Added candidate Anurag Varshney to election ID: ${electionId}`);
 
