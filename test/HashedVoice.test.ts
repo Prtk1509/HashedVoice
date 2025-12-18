@@ -226,4 +226,41 @@ describe("HashedVoice - Basic Election Creation", function () {
 
         await expect(contract.connect(voter).vote(1,1,"24JE0123")).to.be.revertedWith("Not allowed");
     });
+
+    //When an election is open, only admin can see votecount and after the closing of election everyone can.
+
+    it("should hide votes from voters during open election but show to admin, and show to all after closing", async function () {
+        const [admin, candidateManager,voter] = await ethers.getSigners();
+
+        const HashedVoice = await ethers.getContractFactory("HashedVoice");
+
+        const contract = await HashedVoice.deploy();
+        await contract.waitForDeployment();
+
+        await contract.createElection(
+            "CR Election",
+            "Class Representative",
+            "25JE0853",
+            "25JE0992"
+        );
+
+        const CANDIDATE_MANAGER_ROLE = await contract.CANDIDATE_MANAGER_ROLE();
+        await contract.grantRole(CANDIDATE_MANAGER_ROLE,candidateManager.address);
+
+        await contract.connect(candidateManager).addCandidate(1,"Initial Candidate");
+        await contract.openElection(1);
+
+        await contract.connect(voter).vote(1,1,"25JE0900");
+
+        const voterViewOpen = await contract.connect(voter).getCandidate(1,1);
+        expect(voterViewOpen[2]).to.be.equal(0n);
+
+        const adminViewOpen = await contract.connect(admin).getCandidate(1,1);
+        expect(adminViewOpen[2]).to.be.equal(1n);
+
+        await contract.closeElection(1);
+
+        const voterViewClosed = await contract.connect(voter).getCandidate(1,1);
+        expect(voterViewClosed[2]).to.be.equal(1n);
+    });
 });
