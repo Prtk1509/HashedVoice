@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Admin from './pages/Admin';
 import Election from './pages/Election';
 import Results from './pages/Results';
+import Register from './pages/Register';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/admin" element={<Admin />} />
           <Route path="/election/:id" element={<Election />} />
           <Route path="/results" element={<Results />} />
+          <Route path="/register" element={<Register />} />
         </Routes>
       </Layout>
     </BrowserRouter>
