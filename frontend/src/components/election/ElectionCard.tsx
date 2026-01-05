@@ -30,7 +30,7 @@ const ElectionCard = ({ id, title, description, status}: ElectionCardProps) => {
             </p>
 
             <Link to={`/election/${id}`} className="mt-2 inline-block text-sm text-blue-400 hover:underline">
-                View Election →
+                {status === "CLOSED" ? "View Results →" : "View Election →" }
             </Link>
         </div>
     );
