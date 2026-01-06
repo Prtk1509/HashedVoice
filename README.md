@@ -319,6 +319,7 @@ npm run dev
 
 ## 🗒️ Limitation & Future Works
 - Persistent blockchain deployment
+- Admission number is merely an eligibility tag
 - Signature-based admin authentication for backend
 - Fully reactive wallet switching without reload
 - Advanced audit log UI
