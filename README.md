@@ -45,7 +45,7 @@ To design a **Hybrid Web3 voting system** that:
 │   React Frontend   │
 │ (Voting Interface) │
 └─────────┬──────────┘
-          │ REST API
+          │
           ▼
 ┌────────────────────┐
 │  Backend (Node.js) │
@@ -319,8 +319,8 @@ npm run dev
 
 ## 🗒️ Limitation & Future Works
 - Persistent blockchain deployment
+- Improvement in UX
 - Admission number is merely an eligibility tag
-- Signature-based admin authentication for backend
 - Fully reactive wallet switching without reload
 - Advanced audit log UI
 - Role management UI enhancements
