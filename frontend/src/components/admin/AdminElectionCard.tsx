@@ -30,7 +30,7 @@ const AdminElectionCard = ({
     onOpenElection, onCloseElection
 }: AdminElectionCardProps) => {
     return (
-        <div key={id} className="border border-slate-700 rounded-lg p-4">
+        <div key={id} className="border border-slate-700 rounded-lg p-4 mt-4">
             <div className="flex justify-between items-center mb-2">
               <h3 className="font-semibold">
                 {title}
